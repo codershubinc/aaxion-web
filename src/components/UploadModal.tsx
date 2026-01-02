@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { X, Upload, FileUp, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { uploadFile, uploadLargeFile } from '@/services/api';
+import { uploadFile, uploadLargeFile } from '@/services';
 import { formatFileSize } from '@/utils/fileUtils';
 
 interface UploadModalProps {
@@ -135,18 +135,18 @@ export default function UploadModal({ isOpen, onClose, currentPath, onUploadComp
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-2xl bg-dark-surface border border-dark-border rounded-2xl shadow-2xl overflow-hidden"
+                        className="relative w-full max-w-2xl bg-dark-surface border border-dark-border rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden mx-2"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-dark-border">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-accent-blue/20 rounded-lg">
-                                    <Upload className="text-accent-blue" size={24} />
+                        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-dark-border">
+                            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                                <div className="p-1.5 sm:p-2 bg-accent-blue/20 rounded-lg flex-shrink-0">
+                                    <Upload className="text-accent-blue" size={20} />
                                 </div>
-                                <div>
-                                    <h2 className="text-xl font-semibold text-dark-text">Upload Files</h2>
-                                    <p className="text-sm text-dark-muted">
-                                        Upload to: {currentPath || 'Select a folder'}
+                                <div className="min-w-0 flex-1">
+                                    <h2 className="text-base sm:text-xl font-semibold text-dark-text">Upload Files</h2>
+                                    <p className="text-xs sm:text-sm text-dark-muted truncate">
+                                        {currentPath || 'Select a folder'}
                                     </p>
                                 </div>
                             </div>
@@ -160,28 +160,28 @@ export default function UploadModal({ isOpen, onClose, currentPath, onUploadComp
                         </div>
 
                         {/* Content */}
-                        <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[60vh] overflow-y-auto">
                             {/* Dropzone */}
                             <div
                                 {...getRootProps()}
-                                className={`border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer ${isDragActive
-                                        ? 'border-accent-blue bg-accent-blue/10'
-                                        : 'border-dark-border hover:border-accent-blue/50 bg-dark-bg'
+                                className={`border-2 border-dashed rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 transition-all cursor-pointer ${isDragActive
+                                    ? 'border-accent-blue bg-accent-blue/10'
+                                    : 'border-dark-border hover:border-accent-blue/50 bg-dark-bg'
                                     } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <input {...getInputProps()} />
-                                <div className="flex flex-col items-center space-y-3 text-center">
+                                <div className="flex flex-col items-center space-y-2 sm:space-y-3 text-center">
                                     <motion.div
                                         animate={isDragActive ? { scale: 1.1 } : { scale: 1 }}
-                                        className="p-4 bg-dark-surface rounded-full"
+                                        className="p-3 sm:p-4 bg-dark-surface rounded-full"
                                     >
-                                        <FileUp size={32} className="text-accent-blue" />
+                                        <FileUp size={24} className="sm:w-8 sm:h-8 text-accent-blue" />
                                     </motion.div>
                                     <div>
-                                        <p className="text-dark-text font-medium">
+                                        <p className="text-sm sm:text-base text-dark-text font-medium">
                                             {isDragActive ? 'Drop files here' : 'Drag & drop files here'}
                                         </p>
-                                        <p className="text-sm text-dark-muted mt-1">
+                                        <p className="text-xs sm:text-sm text-dark-muted mt-1">
                                             or click to browse
                                         </p>
                                     </div>
@@ -254,11 +254,11 @@ export default function UploadModal({ isOpen, onClose, currentPath, onUploadComp
                         </div>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-between p-6 border-t border-dark-border bg-dark-bg">
-                            <p className="text-sm text-dark-muted">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-4 sm:p-6 border-t border-dark-border bg-dark-bg gap-3 sm:gap-0">
+                            <p className="text-xs sm:text-sm text-dark-muted text-center sm:text-left">
                                 {uploadingFiles.length} file(s) selected
                             </p>
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2 sm:space-x-3">
                                 <button
                                     onClick={handleClose}
                                     disabled={isUploading}

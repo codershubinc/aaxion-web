@@ -9,6 +9,9 @@ const config: Config = {
     darkMode: 'class',
     theme: {
         extend: {
+            screens: {
+                'xs': '475px',
+            },
             colors: {
                 dark: {
                     bg: '#0a0a0a',

@@ -10,6 +10,14 @@ export interface SystemInfo {
     root_path: string;
 }
 
+export interface StorageInfo {
+    total: number;
+    used: number;
+    available: number;
+    usage_percentage: number;
+    external_devices: any;
+}
+
 export interface ChunkUploadProgress {
     filename: string;
     chunkIndex: number;
