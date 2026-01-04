@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 /**
  * Share Service - Handles file sharing operations
@@ -10,7 +11,7 @@ import axios from 'axios';
  * @returns The temporary share link
  */
 export const requestTempShare = async (filePath: string): Promise<string> => {
-    const response = await axios.get(`/files/d/r`, {
+    const response = await axios.get(`${API_BASE_URL}/files/d/r`, {
         params: { file_path: filePath },
     });
     return response.data;

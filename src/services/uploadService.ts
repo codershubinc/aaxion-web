@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 /**
  * Upload Service - Handles file uploads including chunked uploads for large files
@@ -22,7 +23,7 @@ export const uploadFile = async (
     let lastTime = Date.now();
     let lastSpeed = 0;
 
-    await axios.post(`/files/upload`, formData, {
+    await axios.post(`${API_BASE_URL}/files/upload`, formData, {
         params: { dir: targetDir },
         onUploadProgress: (progressEvent) => {
             if (progressEvent.total && onProgress) {
@@ -51,7 +52,7 @@ export const uploadFile = async (
  * @param filename - The name of the file being uploaded
  */
 export const startChunkUpload = async (filename: string): Promise<void> => {
-    await axios.post(`/files/upload/chunk/start`, null, {
+    await axios.post(`${API_BASE_URL}/files/upload/chunk/start`, null, {
         params: { filename },
     });
 };
@@ -68,7 +69,7 @@ export const uploadChunk = async (
     chunkData: Blob,
     onProgress?: (loaded: number, total: number) => void
 ): Promise<void> => {
-    await axios.post(`/files/upload/chunk`, chunkData, {
+    await axios.post(`${API_BASE_URL}/files/upload/chunk`, chunkData, {
         params: { filename, chunk_index: chunkIndex },
         headers: {
             'Content-Type': 'application/octet-stream',
@@ -90,7 +91,7 @@ export const completeChunkUpload = async (
     filename: string,
     targetDir: string
 ): Promise<void> => {
-    await axios.post(`/files/upload/chunk/complete`, null, {
+    await axios.post(`${API_BASE_URL}/files/upload/chunk/complete`, null, {
         params: { filename, dir: targetDir },
     });
 };
