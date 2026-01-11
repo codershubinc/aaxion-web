@@ -98,11 +98,13 @@ export default function ImagePreview({ isOpen, onClose, files, initialFile }: Im
     };
 
     const getImagePreviewUrl = (filePath: string): string => {
-        return `${getApiBaseUrl()}/api/files/download?path=${encodeURIComponent(filePath)}`;
+        const baseUrl = getApiBaseUrl();
+        return `${baseUrl}/api/files/download?path=${encodeURIComponent(filePath)}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
-        return `${getApiBaseUrl()}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
+        const baseUrl = getApiBaseUrl();
+        return `${baseUrl}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
     };
 
     if (!isOpen || images.length === 0) return null;

@@ -83,11 +83,13 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
     };
 
     const getImagePreviewUrl = (filePath: string): string => {
-        return `${getApiBaseUrl()}/api/files/download?path=${encodeURIComponent(filePath)}`;
+        const baseUrl = getApiBaseUrl();
+        return `${baseUrl}/api/files/download?path=${encodeURIComponent(filePath)}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
-        return `${getApiBaseUrl()}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
+        const baseUrl = getApiBaseUrl();
+        return `${baseUrl}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
     };
 
     const handleDownload = (file: FileItem) => {
