@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Folder, HardDrive, X, Download, Video, Github, FileText, Music, Image } from 'lucide-react';
+import { Home, Folder, HardDrive, X, Download, Video, Github, FileText, Music, Image, Settings, Save } from 'lucide-react';
 import { getSystemRootPath, getStorageInfo, viewFiles } from '@/services';
 import type { StorageInfo } from '@/types';
 
@@ -18,8 +18,16 @@ export default function Sidebar({ currentPath, onPathChange, isOpen, onClose }: 
     const [importantFolders, setImportantFolders] = useState<Array<{ icon: any; label: string; path: string; color: string }>>([]);
     const [isDesktop, setIsDesktop] = useState(false);
     const [storageInfo, setStorageInfo] = useState<StorageInfo | null>(null);
+    const [apiIp, setApiIp] = useState('');
+
+    const handleSaveIp = () => {
+        localStorage.setItem('API_IP', apiIp);
+        window.location.reload();
+    };
 
     useEffect(() => {
+        const stored = localStorage.getItem('API_IP');
+        setApiIp(stored || window.location.hostname);
         loadRootPath();
         loadStorageInfo();
         const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
@@ -238,6 +246,31 @@ export default function Sidebar({ currentPath, onPathChange, isOpen, onClose }: 
                                 )}
                             </>
                         )}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-dark-border">
+                    <div className="px-3 space-y-3">
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="text-dark-muted">Server IP</span>
+                            <Settings size={14} className="text-dark-muted" />
+                        </div>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={apiIp}
+                                onChange={(e) => setApiIp(e.target.value)}
+                                className="bg-dark-bg text-dark-text text-sm rounded px-2 py-1 w-full border border-dark-border focus:border-accent-blue outline-none"
+                                placeholder="Server IP"
+                            />
+                            <button
+                                onClick={handleSaveIp}
+                                className="p-1.5 bg-dark-bg hover:bg-dark-hover text-accent-blue rounded border border-dark-border transition-colors"
+                                title="Save & Reload"
+                            >
+                                <Save size={14} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </motion.aside>

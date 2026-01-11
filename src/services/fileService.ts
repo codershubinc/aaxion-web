@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { FileItem } from '@/types';
-import { API_BASE_URL } from '@/config';
+import { getApiBaseUrl } from '@/config';
 
 /**
  * File Service - Handles file viewing and directory operations
@@ -12,7 +12,7 @@ import { API_BASE_URL } from '@/config';
  * @returns Array of file items
  */
 export const viewFiles = async (dirPath: string): Promise<FileItem[]> => {
-    const response = await axios.get(`${API_BASE_URL}/api/files/view`, {
+    const response = await axios.get(`${getApiBaseUrl()}/api/files/view`, {
         params: { dir: dirPath || '/' },
     });
     return response.data;
@@ -23,7 +23,7 @@ export const viewFiles = async (dirPath: string): Promise<FileItem[]> => {
  * @param path - The full path where the directory should be created
  */
 export const createDirectory = async (path: string): Promise<void> => {
-    await axios.post(`${API_BASE_URL}/files/create-directory`, null, {
+    await axios.post(`${getApiBaseUrl()}/files/create-directory`, null, {
         params: { path },
     });
 };
@@ -33,5 +33,5 @@ export const createDirectory = async (path: string): Promise<void> => {
  * @param filePath - The full path to the file to download
  */
 export const downloadFile = (filePath: string): void => {
-    window.location.href = `${API_BASE_URL}/api/files/download?path=${encodeURIComponent(filePath)}`;
+    window.location.href = `${getApiBaseUrl()}/api/files/download?path=${encodeURIComponent(filePath)}`;
 }
