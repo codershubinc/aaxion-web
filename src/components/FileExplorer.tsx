@@ -87,7 +87,7 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
-        return `${getApiBaseUrl}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
+        return `${getApiBaseUrl()}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
     };
 
     const handleDownload = (file: FileItem) => {
