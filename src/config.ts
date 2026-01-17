@@ -1,7 +1,7 @@
 export const getApiBaseUrl = () => {
     if (typeof window !== 'undefined') {
         const storedIp = localStorage.getItem('API_IP');
-        if (!storedIp?.includes("localhost")) {
+        if (storedIp?.includes("aaxion")) {
             return `https://${storedIp}`;
         }
         if (storedIp) {
