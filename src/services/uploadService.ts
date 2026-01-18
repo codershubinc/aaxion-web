@@ -86,11 +86,16 @@ export const uploadChunk = async (
  * Complete a chunked upload session
  * @param filename - The name of the file being uploaded
  * @param targetDir - The target directory path
+ * @param onStart - Optional callback when finalization starts
  */
 export const completeChunkUpload = async (
     filename: string,
-    targetDir: string
+    targetDir: string,
+    onStart?: () => void
 ): Promise<void> => {
+    if (onStart) {
+        onStart();
+    }
     await axios.post(`${getApiBaseUrl()}/files/upload/chunk/complete`, null, {
         params: { filename, dir: targetDir },
     });

@@ -4,13 +4,14 @@ import { useState } from 'react';
 import FileExplorer from '@/components/FileExplorer';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
-import UploadModal from '@/components/UploadModal';
+import UploadModal, { UploadProgress } from '@/components/UploadModal';
 
 export default function Home() {
     const [currentPath, setCurrentPath] = useState<string>('/');
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
 
     const handleRefresh = () => {
         setRefreshKey(prev => prev + 1);
@@ -23,6 +24,7 @@ export default function Home() {
                 currentPath={currentPath}
                 onRefresh={handleRefresh}
                 onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                uploadProgress={uploadProgress}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -55,6 +57,7 @@ export default function Home() {
                 onClose={() => setIsUploadModalOpen(false)}
                 currentPath={currentPath}
                 onUploadComplete={handleRefresh}
+                onUploadProgress={setUploadProgress}
             />
         </div>
     );

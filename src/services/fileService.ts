@@ -33,5 +33,5 @@ export const createDirectory = async (path: string): Promise<void> => {
  * @param filePath - The full path to the file to download
  */
 export const downloadFile = (filePath: string): void => {
-    window.location.href = `${getApiBaseUrl()}/api/files/download?path=${encodeURIComponent(filePath)}`;
+    window.location.href = `${getApiBaseUrl()}/files/download?path=${encodeURIComponent(filePath)}`;
 }

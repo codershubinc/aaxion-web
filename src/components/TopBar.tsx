@@ -1,21 +1,30 @@
 'use client';
 
-import { Upload, RefreshCw, FolderPlus, Menu } from 'lucide-react';
+import { Upload, RefreshCw, FolderPlus, Menu, Loader } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { createDirectory } from '@/services';
+import { formatFileSize } from '@/utils/fileUtils';
+import { UploadProgress } from './UploadModal';
 
 interface TopBarProps {
     onUploadClick: () => void;
     currentPath: string;
     onRefresh: () => void;
     onMenuClick: () => void;
+    uploadProgress?: UploadProgress | null;
 }
 
-export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuClick }: TopBarProps) {
+export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuClick, uploadProgress }: TopBarProps) {
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [folderName, setFolderName] = useState('');
+
+    const formatTime = (seconds: number) => {
+        if (seconds < 60) return `${seconds}s`;
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+        return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
+    };
 
     const handleCreateFolder = async () => {
         if (!folderName.trim()) {
@@ -129,15 +138,50 @@ export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuCl
                     <RefreshCw className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 </motion.button>
 
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onUploadClick}
-                    className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-accent-blue hover:bg-accent-blue/80 rounded-lg transition-colors"
-                >
-                    <Upload className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-                    <span className="text-xs sm:text-sm font-medium hidden xs:inline">Upload</span>
-                </motion.button>
+                {!uploadProgress?.isUploading ? (
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={onUploadClick}
+                        className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-accent-blue hover:bg-accent-blue/80 rounded-lg transition-colors"
+                    >
+                        <Upload className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                        <span className="text-xs sm:text-sm font-medium hidden xs:inline">Upload</span>
+                    </motion.button>
+                ) : (
+                    <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="px-3 sm:px-4 py-2 bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 border border-accent-blue/30 rounded-full flex items-center gap-2"
+                    >
+                        <Loader className="animate-spin text-accent-blue flex-shrink-0 w-3 h-3 sm:w-4 sm:h-4" />
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
+                            <span className="font-semibold text-dark-text whitespace-nowrap">
+                                {uploadProgress.completedFiles}/{uploadProgress.totalFiles}
+                            </span>
+                            <span className="text-dark-muted hidden xs:inline">•</span>
+                            <span className="font-medium text-accent-blue whitespace-nowrap hidden xs:inline">
+                                {uploadProgress.overallProgress}%
+                            </span>
+                            {uploadProgress.speed > 0 && (
+                                <>
+                                    <span className="text-dark-muted hidden sm:inline">•</span>
+                                    <span className="text-accent-green font-medium whitespace-nowrap hidden sm:inline">
+                                        {formatFileSize(uploadProgress.speed)}/s
+                                    </span>
+                                </>
+                            )}
+                            {uploadProgress.estimatedTimeRemaining > 0 && (
+                                <>
+                                    <span className="text-dark-muted hidden md:inline">•</span>
+                                    <span className="text-dark-muted whitespace-nowrap hidden md:inline">
+                                        {formatTime(uploadProgress.estimatedTimeRemaining)}
+                                    </span>
+                                </>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
             </div>
         </motion.header>
     );
