@@ -1,20 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import FileExplorer from '@/components/FileExplorer';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import UploadModal, { UploadProgress } from '@/components/UploadModal';
 
-export default function Home() {
-    const [currentPath, setCurrentPath] = useState<string>('/');
+function HomeContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const [currentPath, setCurrentPathState] = useState<string>(searchParams.get('dir') || '/');
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
 
+    // Initialize from URL
+    useEffect(() => {
+        const dir = searchParams.get('dir');
+        if (dir) {
+            setCurrentPathState(dir);
+        } else {
+            setCurrentPathState('/');
+        }
+    }, [searchParams]);
+
     const handleRefresh = () => {
         setRefreshKey(prev => prev + 1);
+    };
+
+    const handlePathChange = (path: string) => {
+        setCurrentPathState(path);
+        const params = new URLSearchParams(searchParams.toString());
+        if (path && path !== '/') {
+            params.set('dir', path);
+        } else {
+            params.delete('dir');
+        }
+        router.push(`/?${params.toString()}`);
     };
 
     return (
@@ -38,7 +62,7 @@ export default function Home() {
 
                 <Sidebar
                     currentPath={currentPath}
-                    onPathChange={setCurrentPath}
+                    onPathChange={handlePathChange}
                     isOpen={isSidebarOpen}
                     onClose={() => setIsSidebarOpen(false)}
                 />
@@ -46,7 +70,7 @@ export default function Home() {
                 <main className="flex-1 overflow-hidden">
                     <FileExplorer
                         currentPath={currentPath}
-                        onPathChange={setCurrentPath}
+                        onPathChange={handlePathChange}
                         refreshKey={refreshKey}
                     />
                 </main>
@@ -60,5 +84,13 @@ export default function Home() {
                 onUploadProgress={setUploadProgress}
             />
         </div>
+    );
+}
+
+export default function Home() {
+    return (
+        <Suspense fallback={<div className="h-screen bg-dark-bg flex items-center justify-center text-dark-text">Loading...</div>}>
+            <HomeContent />
+        </Suspense>
     );
 }
