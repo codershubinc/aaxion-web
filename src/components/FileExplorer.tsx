@@ -104,35 +104,64 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
     const handleShare = async (file: FileItem) => {
         try {
             const shareLink = await requestTempShare(file.raw_path);
-
-            const fullUrl = `${window.location.origin}${shareLink.share_link}`;
+            const fullUrl = `${shareLink.baseUri}${shareLink.share_link}`;
             console.log("share uri", fullUrl);
 
-            // Check if clipboard API is available
+            // 1. Try Modern API (Works on HTTPS / Localhost)
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                await navigator.clipboard.writeText(fullUrl);
-                toast.success('Share link copied to clipboard!');
-            } else {
-                // Fallback: show the link in a toast for manual copying
-                toast((t) => (
-                    <div className="flex flex-col gap-2">
-                        <span className="font-medium">Share Link:</span>
-                        <input
-                            type="text"
-                            value={fullUrl}
-                            readOnly
-                            onClick={(e) => (e.target as HTMLInputElement).select()}
-                            className="px-2 py-1 bg-dark-bg border border-dark-border rounded text-xs"
-                        />
-                        <span className="text-xs text-dark-muted">Click to select and copy</span>
-                    </div>
-                ), {
-                    duration: 8000,
-                });
+                try {
+                    await navigator.clipboard.writeText(fullUrl);
+                    toast.success('Share link copied to clipboard!');
+                    return; // Exit if successful
+                } catch (err) {
+                    console.warn('Modern clipboard copy failed, trying legacy...', err);
+                }
             }
+
+            // 2. Legacy Fallback (Works on HTTP / Local Networks)
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = fullUrl;
+
+                // Make it invisible but part of the DOM
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+
+                textArea.focus();
+                textArea.select();
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                if (successful) {
+                    toast.success('Share link copied to clipboard!');
+                    return; // Exit if successful
+                }
+            } catch (err) {
+                console.error('Legacy copy failed', err);
+            }
+
+            // 3. Final Fallback: Show manual copy UI
+            toast((t) => (
+                <div className="flex flex-col gap-2">
+                    <span className="font-medium">Share Link:</span>
+                    <input
+                        type="text"
+                        value={fullUrl}
+                        readOnly
+                        onClick={(e) => (e.target as HTMLInputElement).select()}
+                        className="px-2 py-1 bg-dark-bg border border-dark-border rounded text-xs"
+                    />
+                    <span className="text-xs text-dark-muted">Click to select and copy</span>
+                </div>
+            ), {
+                duration: 8000,
+            });
+
         } catch (error) {
             console.log("got err", error);
-
             toast.error('Failed to generate share link');
         }
     };
