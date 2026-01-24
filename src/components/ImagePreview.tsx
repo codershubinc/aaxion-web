@@ -99,7 +99,7 @@ export default function ImagePreview({ isOpen, onClose, files, initialFile }: Im
 
     const getImagePreviewUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/api/files/download?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}/files/download?path=${encodeURIComponent(filePath)}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
