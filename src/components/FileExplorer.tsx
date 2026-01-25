@@ -82,11 +82,6 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
         }
     };
 
-    const getImagePreviewUrl = (filePath: string): string => {
-        const baseUrl = getApiBaseUrl();
-        return `${baseUrl}${API_ENDPOINTS.FILES.DOWNLOAD}?path=${encodeURIComponent(filePath)}`;
-    };
-
     const getImageThumbnailUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
         return `${baseUrl}${API_ENDPOINTS.FILES.THUMBNAIL}?path=${encodeURIComponent(filePath)}`;
@@ -112,7 +107,7 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
                 try {
                     await navigator.clipboard.writeText(fullUrl);
                     toast.success('Share link copied to clipboard!');
-                    return; // Exit if successful
+                    return; 
                 } catch (err) {
                     console.warn('Modern clipboard copy failed, trying legacy...', err);
                 }
