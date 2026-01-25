@@ -7,22 +7,13 @@ import { X, Upload, FileUp, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { uploadFile, uploadLargeFile } from '@/services';
 import { formatFileSize, isLocalNetwork } from '@/utils/fileUtils';
+import { useAppState } from '@/context/AppContext';
 
 interface UploadModalProps {
     isOpen: boolean;
     onClose: () => void;
     currentPath: string;
     onUploadComplete: () => void;
-    onUploadProgress?: (progress: UploadProgress) => void;
-}
-
-export interface UploadProgress {
-    isUploading: boolean;
-    completedFiles: number;
-    totalFiles: number;
-    overallProgress: number;
-    speed: number;
-    estimatedTimeRemaining: number;
 }
 
 interface UploadingFile {
@@ -34,10 +25,11 @@ interface UploadingFile {
     totalChunks?: number;
 }
 
-export default function UploadModal({ isOpen, onClose, currentPath, onUploadComplete, onUploadProgress }: UploadModalProps) {
+export default function UploadModal({ isOpen, onClose, currentPath, onUploadComplete }: UploadModalProps) {
     const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [showMinimized, setShowMinimized] = useState(false);
+    const { updateUploadProgress } = useAppState();
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const newFiles = acceptedFiles.map(file => ({
@@ -220,13 +212,37 @@ export default function UploadModal({ isOpen, onClose, currentPath, onUploadComp
         setUploadingFiles(prev => prev.filter((_, idx) => idx !== index));
     };
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         if (!isUploading) {
             setUploadingFiles([]);
             setShowMinimized(false);
             onClose();
         }
-    };
+    }, [isUploading, onClose]);
+
+    // Handle Escape key
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isOpen && !showMinimized) {
+                handleClose();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, showMinimized, handleClose, isUploading, onClose]);
+
+    // Handle Escape key
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isOpen && !showMinimized) {
+                handleClose();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, showMinimized, handleClose]);
 
     const toggleMinimize = () => {
         if (isUploading) {
@@ -262,17 +278,29 @@ export default function UploadModal({ isOpen, onClose, currentPath, onUploadComp
 
     // Notify parent of upload progress
     React.useEffect(() => {
-        if (onUploadProgress) {
-            onUploadProgress({
-                isUploading,
-                completedFiles,
-                totalFiles,
-                overallProgress,
-                speed: averageSpeed,
-                estimatedTimeRemaining
-            });
+        // Determine overall status
+        let currentStatus: 'pending' | 'uploading' | 'finalizing' | 'completed' | 'error' = 'pending';
+        if (isUploading) {
+            const isFinalizing = uploadingFiles.some(f => f.status === 'finalizing');
+            const hasErrors = uploadingFiles.some(f => f.status === 'error');
+
+            if (hasErrors) currentStatus = 'error';
+            else if (isFinalizing) currentStatus = 'finalizing';
+            else currentStatus = 'uploading';
+        } else if (allCompleted) {
+            currentStatus = 'completed';
         }
-    }, [isUploading, completedFiles, totalFiles, overallProgress, averageSpeed, estimatedTimeRemaining, onUploadProgress]);
+
+        updateUploadProgress({
+            isUploading,
+            status: currentStatus,
+            completedFiles,
+            totalFiles,
+            overallProgress,
+            speed: averageSpeed,
+            estimatedTimeRemaining
+        });
+    }, [isUploading, uploadingFiles, completedFiles, totalFiles, overallProgress, averageSpeed, estimatedTimeRemaining, updateUploadProgress, allCompleted]);
 
     return (
         <>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getApiBaseUrl } from '@/config';
+import { getApiBaseUrl, API_ENDPOINTS } from '@/config';
 
 /**
  * Share Service - Handles file sharing operations
@@ -12,7 +12,7 @@ import { getApiBaseUrl } from '@/config';
  */
 export const requestTempShare = async (filePath: string): Promise<{ share_link: string, baseUri: string }> => {
     const baseUri = getApiBaseUrl();
-    const response = await axios.get(`${baseUri}/files/d/r`, {
+    const response = await axios.get(`${baseUri}${API_ENDPOINTS.FILES.SHARE}`, {
         params: { file_path: filePath },
     });
     return {

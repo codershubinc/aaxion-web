@@ -7,7 +7,7 @@ import { formatFileSize, isImageFile } from '@/utils/fileUtils';
 import { downloadFile } from '@/services';
 import type { FileItem } from '@/types';
 import toast from 'react-hot-toast';
-import { getApiBaseUrl } from '@/config';
+import { getApiBaseUrl, API_ENDPOINTS } from '@/config';
 
 interface ImagePreviewProps {
     isOpen: boolean;
@@ -99,12 +99,12 @@ export default function ImagePreview({ isOpen, onClose, files, initialFile }: Im
 
     const getImagePreviewUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/api/files/download?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}${API_ENDPOINTS.FILES.DOWNLOAD}?path=${encodeURIComponent(filePath)}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}${API_ENDPOINTS.FILES.THUMBNAIL}?path=${encodeURIComponent(filePath)}`;
     };
 
     if (!isOpen || images.length === 0) return null;

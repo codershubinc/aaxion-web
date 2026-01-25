@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import FileExplorer from '@/components/FileExplorer';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
-import UploadModal, { UploadProgress } from '@/components/UploadModal';
+import UploadModal from '@/components/UploadModal';
 
 function HomeContent() {
     const searchParams = useSearchParams();
@@ -14,7 +14,6 @@ function HomeContent() {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
-    const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
 
     // Initialize from URL
     useEffect(() => {
@@ -48,7 +47,6 @@ function HomeContent() {
                 currentPath={currentPath}
                 onRefresh={handleRefresh}
                 onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                uploadProgress={uploadProgress}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -81,7 +79,6 @@ function HomeContent() {
                 onClose={() => setIsUploadModalOpen(false)}
                 currentPath={currentPath}
                 onUploadComplete={handleRefresh}
-                onUploadProgress={setUploadProgress}
             />
         </div>
     );

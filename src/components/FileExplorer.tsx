@@ -8,7 +8,7 @@ import { viewFiles, downloadFile, requestTempShare, getSystemRootPath } from '@/
 import type { FileItem } from '@/types';
 import { formatFileSize, isImageFile } from '@/utils/fileUtils';
 import ImagePreview from './ImagePreview';
-import { getApiBaseUrl } from '@/config';
+import { getApiBaseUrl, API_ENDPOINTS } from '@/config';
 
 interface FileExplorerProps {
     currentPath: string;
@@ -84,12 +84,12 @@ export default function FileExplorer({ currentPath, onPathChange, refreshKey }: 
 
     const getImagePreviewUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/files/download?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}${API_ENDPOINTS.FILES.DOWNLOAD}?path=${encodeURIComponent(filePath)}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/files/thumbnail?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}${API_ENDPOINTS.FILES.THUMBNAIL}?path=${encodeURIComponent(filePath)}`;
     };
 
     const handleDownload = (file: FileItem) => {

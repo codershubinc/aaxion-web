@@ -6,17 +6,17 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { createDirectory } from '@/services';
 import { formatFileSize } from '@/utils/fileUtils';
-import { UploadProgress } from './UploadModal';
+import { useAppState } from '@/context/AppContext';
 
 interface TopBarProps {
     onUploadClick: () => void;
     currentPath: string;
     onRefresh: () => void;
     onMenuClick: () => void;
-    uploadProgress?: UploadProgress | null;
 }
 
-export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuClick, uploadProgress }: TopBarProps) {
+export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuClick }: TopBarProps) {
+    const { uploadProgress } = useAppState();
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [folderName, setFolderName] = useState('');
 
@@ -156,27 +156,35 @@ export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuCl
                     >
                         <Loader className="animate-spin text-accent-blue flex-shrink-0 w-3 h-3 sm:w-4 sm:h-4" />
                         <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
-                            <span className="font-semibold text-dark-text whitespace-nowrap">
-                                {uploadProgress.completedFiles}/{uploadProgress.totalFiles}
-                            </span>
-                            <span className="text-dark-muted hidden xs:inline">•</span>
-                            <span className="font-medium text-accent-blue whitespace-nowrap hidden xs:inline">
-                                {uploadProgress.overallProgress}%
-                            </span>
-                            {uploadProgress.speed > 0 && (
+                            {uploadProgress.status === 'finalizing' ? (
+                                <span className="font-semibold text-accent-blue whitespace-nowrap animate-pulse">
+                                    Finalizing...
+                                </span>
+                            ) : (
                                 <>
-                                    <span className="text-dark-muted hidden sm:inline">•</span>
-                                    <span className="text-accent-green font-medium whitespace-nowrap hidden sm:inline">
-                                        {formatFileSize(uploadProgress.speed)}/s
+                                    <span className="font-semibold text-dark-text whitespace-nowrap">
+                                        {uploadProgress.completedFiles}/{uploadProgress.totalFiles}
                                     </span>
-                                </>
-                            )}
-                            {uploadProgress.estimatedTimeRemaining > 0 && (
-                                <>
-                                    <span className="text-dark-muted hidden md:inline">•</span>
-                                    <span className="text-dark-muted whitespace-nowrap hidden md:inline">
-                                        {formatTime(uploadProgress.estimatedTimeRemaining)}
+                                    <span className="text-dark-muted hidden xs:inline">•</span>
+                                    <span className="font-medium text-accent-blue whitespace-nowrap hidden xs:inline">
+                                        {uploadProgress.overallProgress}%
                                     </span>
+                                    {uploadProgress.speed > 0 && (
+                                        <>
+                                            <span className="text-dark-muted hidden sm:inline">•</span>
+                                            <span className="text-accent-green font-medium whitespace-nowrap hidden sm:inline">
+                                                {formatFileSize(uploadProgress.speed)}/s
+                                            </span>
+                                        </>
+                                    )}
+                                    {uploadProgress.estimatedTimeRemaining > 0 && (
+                                        <>
+                                            <span className="text-dark-muted hidden md:inline">•</span>
+                                            <span className="text-dark-muted whitespace-nowrap hidden md:inline">
+                                                {formatTime(uploadProgress.estimatedTimeRemaining)}
+                                            </span>
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
