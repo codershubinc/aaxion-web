@@ -1,5 +1,5 @@
 {
-    "name": "aaxion-web",
+    "name": "aaxion-client",
     "version": "0.1.0",
     "private": true,
     "scripts": {
