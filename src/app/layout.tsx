@@ -13,7 +13,25 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Aaxion Drive - Personal Cloud Storage",
-    description: "Modern, high-performance file storage and management system",
+    description: "Transform your old hardware into a high-performance personal cloud. Secure, fast, and lightweight file management system.",
+    applicationName: "Aaxion Drive",
+    authors: [{ name: "Swapnil Ingle", url: "https://github.com/codershubinc" }],
+    keywords: ["personal cloud", "file storage", "self-hosted", "google drive alternative", "aaxion", "tauri", "nextjs"],
+    icons: {
+        icon: "/favicon.ico",
+    },
+    openGraph: {
+        title: "Aaxion Drive - Personal Cloud Storage",
+        description: "Transform your old hardware into a high-performance personal cloud. Secure, fast, and lightweight file management system.",
+        type: "website",
+        locale: "en_US",
+        siteName: "Aaxion Drive",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Aaxion Drive - Personal Cloud Storage",
+        description: "Transform your old hardware into a high-performance personal cloud. Secure, fast, and lightweight file management system.",
+    },
 };
 
 export default function RootLayout({
