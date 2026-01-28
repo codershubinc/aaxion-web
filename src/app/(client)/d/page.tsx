@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import FileExplorer from '@/components/FileExplorer';
+import FileExplorer from '@/components/explorer/FileExplorer';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import UploadModal from '@/components/UploadModal';

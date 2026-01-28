@@ -53,7 +53,7 @@ export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuCl
         <motion.header
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="h-14 sm:h-16 bg-dark-surface border-b border-dark-border flex items-center justify-between px-3 sm:px-6"
+            className="h-14 sm:h-16 bg-dark-surface border-b border-dark-border flex items-center justify-between px-3 sm:px-6 mt-0"
         >
             <div className="flex items-center space-x-2 sm:space-x-4">
                 {/* Mobile Menu Button */}

@@ -54,7 +54,6 @@ export const ApiReference = () => {
                                 <CodeBlock language="json" code={`{ "message": "User created successfully" }`} />
                             </div>
                         </div>
-
                         <div>
                             <div className="flex items-center gap-3 mb-3">
                                 <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded">POST</span>

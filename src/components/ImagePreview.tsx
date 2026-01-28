@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn, ZoomOut, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatFileSize, isImageFile } from '@/utils/fileUtils';
-import { downloadFile } from '@/services';
+import { downloadFile, getToken } from '@/services';
 import type { FileItem } from '@/types';
 import toast from 'react-hot-toast';
 import { getApiBaseUrl, API_ENDPOINTS } from '@/config';
@@ -99,12 +99,12 @@ export default function ImagePreview({ isOpen, onClose, files, initialFile }: Im
 
     const getImagePreviewUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}/files/download?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}/files/download?path=${encodeURIComponent(filePath)}&tkn=${getToken()}`;
     };
 
     const getImageThumbnailUrl = (filePath: string): string => {
         const baseUrl = getApiBaseUrl();
-        return `${baseUrl}${API_ENDPOINTS.FILES.THUMBNAIL}?path=${encodeURIComponent(filePath)}`;
+        return `${baseUrl}${API_ENDPOINTS.FILES.THUMBNAIL}?path=${encodeURIComponent(filePath)}&tkn=${getToken()}`;
     };
 
     if (!isOpen || images.length === 0) return null;
