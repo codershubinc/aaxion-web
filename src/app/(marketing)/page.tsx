@@ -18,11 +18,34 @@
     along with Aaxion.  If not, see <https://www.gnu.org/licenses/>.
 */
 "use client"
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import InstallCmd from '@/components/InstallCmd';
 import GitHubButton from '@/components/GitHubButton';
 
 export default function Home() {
+    const router = useRouter();
+    // 1. Start with isReady = false. This hides the page initially.
+    const [isReady, setIsReady] = useState(false);
+
+    useEffect(() => {
+        const isTauri = typeof window !== 'undefined' && (
+            (window as any).__TAURI__ ||
+            (window as any).__TAURI_INTERNALS__
+        );
+
+        if (isTauri) {
+            router.replace('/d');
+        } else {
+            setIsReady(true);
+        }
+    }, [router]);
+
+    if (!isReady) {
+        return <div className="min-h-screen bg-[#121212]" />;
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-[#121212] text-[#E5E7EB] font-sans">
             <nav className="border-b border-[#2D2D2D] bg-[#121212]/80 backdrop-blur-md fixed w-full z-50 top-10">
