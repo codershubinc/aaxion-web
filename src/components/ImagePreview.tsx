@@ -23,7 +23,7 @@ export default function ImagePreview({ isOpen, onClose, files, initialFile }: Im
     const [isLoaded, setIsLoaded] = useState(false);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
     console.log("Got image to preview", initialFile);
-    
+
 
     useEffect(() => {
         if (isOpen && files.length > 0) {

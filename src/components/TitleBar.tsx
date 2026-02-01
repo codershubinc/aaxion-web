@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function TitleBar() {
@@ -23,6 +24,12 @@ export default function TitleBar() {
         >
             <div className="flex items-center gap-2 pl-4 pointer-events-none text-gray-400 text-xs font-bold uppercase tracking-widest">
                 Aaxion Client
+            </div>
+            <div>
+                <Link href="/streamer" className="pointer-events-auto px-4 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <svg width="34" height="10" viewBox="0 0 34 10"><path fill="currentColor" d="M0 0h34v10H0z" /></svg>
+                    stream
+                </Link>
             </div>
 
             <div className="flex h-full">
