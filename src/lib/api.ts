@@ -1,15 +1,19 @@
+import { getApiBaseUrl } from "@/config";
+
 // src/lib/api.ts
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+export const API_BASE = getApiBaseUrl()
 
 export const getToken = () => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem('aaxion_token');
+        return localStorage.getItem('auth_token');
     }
     return null;
 };
 
 export const authenticatedFetch = async (url: string, options: RequestInit = {}) => {
     const token = getToken();
+    console.log("Token ::", token);
+
     const headers = {
         ...options.headers,
         'Authorization': `Bearer ${token}`,

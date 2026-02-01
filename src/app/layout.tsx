@@ -4,12 +4,13 @@
 */
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { AppProvider } from "@/context/AppContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const cursive = Dancing_Script({ subsets: ["latin"], weight: "700", variable: '--font-cursive' });
 
 export const metadata: Metadata = {
     title: "Aaxion Drive - Personal Cloud Storage",
@@ -54,7 +55,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="dark">
-            <body className={`${inter.className} bg-[#121212] text-white overflow-hidden flex flex-col h-screen`}>
+            <body className={`${inter.variable} ${cursive.variable} font-sans bg-[#121212] text-white overflow-hidden flex flex-col h-screen`}>
                 <AppProvider>
                     <Toaster
                         position="top-right"

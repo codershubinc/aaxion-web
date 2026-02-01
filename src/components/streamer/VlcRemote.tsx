@@ -1,8 +1,8 @@
 "use client";
 import { useVlc } from '@/hooks/useVlc';
-import { 
+import {
     Play, Pause, Square, FastForward, Rewind, Monitor, Info, ChevronLeft,
-    Volume2, VolumeX, Maximize, Settings, Gauge 
+    Volume2, VolumeX, Maximize, Settings, Gauge
 } from 'lucide-react';
 import { useState, useRef } from 'react';
 
@@ -18,10 +18,10 @@ interface VlcRemoteProps {
 }
 
 export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
-    const { 
-        isConnected, playing: isPlaying, time, length, volume, rate, 
-        togglePlay, seek, stop, setVolume, setRate, 
-        toggleFullscreen, cycleAudio, cycleSubs, meta 
+    const {
+        isConnected, playing: isPlaying, time, length, volume, rate,
+        togglePlay, seek, stop, setVolume, setRate,
+        toggleFullscreen, cycleAudio, cycleSubs, meta
     } = useVlc();
     const [showDebug, setShowDebug] = useState(false);
 
@@ -80,15 +80,43 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
     // --- STATE: CONNECTING TO VLC ---
     if (!isConnected) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center bg-[#0a0a0a] border-l border-white/5 text-white min-h-[50vh]">
+            <div className="flex-1 flex flex-col items-center justify-center bg-[#0a0a0a] border-l border-white/5 text-white min-h-[50vh] relative">
+                {/* Back Button for stuck state */}
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="absolute top-6 left-6 z-50 p-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                        title="Back to Library"
+                    >
+                        <ChevronLeft size={24} />
+                    </button>
+                )}
+
                 <div className="relative">
                     <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
                     <Monitor className="w-16 h-16 mb-4 text-blue-500 relative z-10 animate-bounce" />
                 </div>
                 <h2 className="text-xl font-bold mt-4 animate-in slide-in-from-bottom-2 fade-in duration-700">Launching VLC...</h2>
-                <p className="text-gray-400 mt-2 text-sm animate-in slide-in-from-bottom-3 fade-in duration-1000 delay-150">
-                    Establishing secure connection to player...
-                </p>
+
+                <div className="text-center space-y-1 mt-2 animate-in slide-in-from-bottom-3 fade-in duration-1000 delay-150">
+                    <p className="text-gray-400 text-sm">
+                        Establishing secure connection to player...
+                    </p>
+                    <p className="text-gray-500 text-xs max-w-xs mx-auto pt-4">
+                        If this takes too long, please check if VLC is installed and running on your system.
+                    </p>
+                </div>
+
+                <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 delay-300">
+                    {onBack && (
+                        <button
+                            onClick={onBack}
+                            className="px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 transition-colors border border-white/5"
+                        >
+                            Return to Library
+                        </button>
+                    )}
+                </div>
             </div>
         );
     }
@@ -111,7 +139,7 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
             {movie.poster_path && (
                 <div className="absolute inset-0 z-0 select-none pointer-events-none">
                     <div
-                        className="absolute inset-0 bg-cover bg-center  bg-no-repeat transition-transform duration-[60s] ease-linear group-hover:scale-105 opacity-50 md:opacity-60"
+                        className="absolute inset-0 bg-cover bg-center  bg-no-repeat transition-transform duration-[60s] ease-linear   opacity-50 md:opacity-60"
                         style={{ backgroundImage: `url(${movie.poster_path})` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent" />
@@ -209,7 +237,7 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
 
                     {/* Controls Section */}
                     <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-12 duration-1000 delay-100 fade-in pb-4">
-                        
+
                         {/* Row 1: Main Transport Controls */}
                         <div className="flex flex-wrap items-center gap-4">
                             <button
@@ -235,8 +263,8 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
                                 <button onClick={() => setVolume(0)} className="text-gray-400 hover:text-white">
                                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                                 </button>
-                                <input 
-                                    type="range" min="0" max="320" value={volume} 
+                                <input
+                                    type="range" min="0" max="320" value={volume}
                                     onChange={(e) => setVolume(parseInt(e.target.value))}
                                     className="w-24 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full"
                                 />
@@ -245,7 +273,7 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
 
                         {/* Row 2: Advanced Toggles */}
                         <div className="flex flex-wrap items-center gap-3 justify-between md:justify-start">
-                            
+
                             {/* Playback Speed */}
                             <button onClick={() => setRate(rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1)} className="px-4 py-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 flex items-center gap-2 transition-all">
                                 <Gauge size={16} />
@@ -257,7 +285,7 @@ export default function VlcRemote({ movie, onBack }: VlcRemoteProps) {
                                 <Settings size={16} />
                                 <span>Audio</span>
                             </button>
-                            
+
                             {/* Subtitle Cycle */}
                             <button onClick={cycleSubs} className="px-4 py-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 text-sm font-medium text-gray-300 flex items-center gap-2 transition-all">
                                 <span className="font-bold border border-gray-400 rounded px-1 text-[10px]">CC</span>

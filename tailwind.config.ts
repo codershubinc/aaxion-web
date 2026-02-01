@@ -27,6 +27,10 @@ const config: Config = {
                     green: '#10b981',
                 },
             },
+            fontFamily: {
+                sans: ['var(--font-inter)'],
+                cursive: ['var(--font-cursive)'],
+            },
             animation: {
                 'fade-in': 'fadeIn 0.3s ease-in-out',
                 'slide-up': 'slideUp 0.4s ease-out',

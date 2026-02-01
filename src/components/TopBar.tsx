@@ -73,12 +73,11 @@ export default function TopBar({ onUploadClick, currentPath, onRefresh, onMenuCl
                 </button>
 
                 <motion.h1
-                    className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent"
+                    className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent flex items-baseline"
                     whileHover={{ scale: 1.05 }}
                 >
-                    Aaxion
+                    Aaxion <span className={`font-cursive text-accent-blue ml-1.5 text-2xl sm:text-3xl`}>Drive</span>
                 </motion.h1>
-                <span className="text-dark-muted hidden sm:inline text-sm sm:text-base">File Storage</span>
             </div>
 
             <div className="flex items-center space-x-1 sm:space-x-3">

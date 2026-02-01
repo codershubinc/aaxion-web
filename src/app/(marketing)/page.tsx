@@ -54,7 +54,9 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
                         <div className="flex items-center">
-                            <span className="text-2xl font-bold text-blue-500">⚡️ Aaxion Drive</span>
+                            <span className="text-2xl font-bold text-blue-500 flex items-center">
+                                ⚡️ Aaxion <span className={`font-cursive ml-1.5 text-3xl`}>Drive</span>
+                            </span>
                         </div>
                         <div className="hidden md:flex space-x-8 items-center">
                             <Link href="#" className="text-gray-300 hover:text-white transition">Home</Link>
@@ -136,7 +138,9 @@ export default function Home() {
                 <div className="py-20 bg-[#121212]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl font-bold text-white">Why Aaxion Drive?</h2>
+                            <h2 className="text-3xl font-bold text-white flex items-center justify-center">
+                                Why Aaxion <span className={`font-cursive ml-2 text-4xl text-blue-500`}>Drive</span>?
+                            </h2>
                             <p className="mt-4 text-gray-400">Engineered for extreme efficiency on limited resources.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -240,7 +244,9 @@ export default function Home() {
             <footer className="bg-[#121212] border-t border-[#1E1E1E] py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-center md:text-left">
-                        <span className="text-lg font-bold text-gray-400">Aaxion Drive</span>
+                        <span className="text-lg font-bold text-gray-400 flex items-center gap-1 justify-center md:justify-start">
+                            Aaxion <span className={` font-cursive text-xl text-blue-500`}>Drive</span>
+                        </span>
                         <p className="text-sm text-gray-600 mt-2">
                             © {new Date().getFullYear()} CodersHub Inc. <br />
                             Licensed under <a href="https://github.com/codershubinc/aaxion/blob/main/LICENSE" className="underline hover:text-gray-400">GNU AGPLv3</a>.

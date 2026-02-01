@@ -107,8 +107,8 @@ export default function MovieGrid({ onSelect, refreshTrigger }: MovieGridProps) 
 
                                 {/* Title & Info Below */}
                                 <div className="space-y-1 px-1">
-                                    <h3 
-                                        className="text-gray-200 font-semibold text-sm md:text-base leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors min-h-[2.5rem]" 
+                                    <h3
+                                        className="text-gray-200 font-semibold text-sm md:text-base leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors min-h-[2.5rem]"
                                         title={m.title}
                                     >
                                         {m.title}

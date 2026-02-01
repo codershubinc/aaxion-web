@@ -1,7 +1,9 @@
 "use client";
 import { useState } from 'react';
 import { authenticatedFetch, API_BASE, getToken } from '@/lib/api';
-import { Upload } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
+import { uploadFile, getSystemRootPath } from '@/services';
+import { formatFileSize } from '@/utils/fileUtils';
 
 interface AddMovieFormProps {
     onSuccess: () => void;
@@ -10,33 +12,30 @@ interface AddMovieFormProps {
 
 export default function AddMovieForm({ onSuccess, onCancel }: AddMovieFormProps) {
     const [loading, setLoading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadSpeed, setUploadSpeed] = useState(0);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+        setUploadProgress(0);
+        setUploadSpeed(0);
+
         const formData = new FormData(e.currentTarget);
         const file = formData.get('file') as File;
         const token = getToken();
 
         try {
             // 1. Get Root Path from backend
-            const rootRes = await authenticatedFetch(`/api/system/get-root-path`);
-            if (!rootRes.ok) throw new Error('Failed to get system info');
-            const { root_path } = await rootRes.json();
+            const root_path = await getSystemRootPath();
 
             // 2. Upload File
-            // Note: In Tauri, we might prefer using the fs plugin, but sticking to fetch for web compatibility
             const targetDir = `${root_path}/.aaxion/movies`;
-            const uploadData = new FormData();
-            uploadData.append('file', file);
 
-            const uploadRes = await fetch(`${API_BASE}/files/upload?dir=${encodeURIComponent(targetDir)}`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: uploadData
+            await uploadFile(file, targetDir, (progress, speed) => {
+                setUploadProgress(progress);
+                setUploadSpeed(speed || 0);
             });
-
-            if (!uploadRes.ok) throw new Error('Upload failed');
 
             // 3. Add Metadata to DB
             const metaData = {
@@ -79,39 +78,75 @@ export default function AddMovieForm({ onSuccess, onCancel }: AddMovieFormProps)
                     <div className="grid grid-cols-2 gap-6">
                         <div className="col-span-2">
                             <label className="block text-sm font-medium text-gray-400 mb-2">Movie Title</label>
-                            <input type="text" name="title" required className="form-input-dark" placeholder="e.g. Inception" />
+                            <input
+                                type="text"
+                                name="title"
+                                required
+                                className="w-full bg-[#0a0a0a] border border-[#2D2D2D] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 placeholder:text-gray-700"
+                                placeholder="e.g. Inception"
+                            />
                         </div>
 
                         <div className="col-span-2">
                             <label className="block text-sm font-medium text-gray-400 mb-2">Movie File</label>
-                            <input type="file" name="file" required className="form-input-dark file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+                            <input
+                                type="file"
+                                name="file"
+                                required
+                                className="w-full bg-[#0a0a0a] border border-[#2D2D2D] rounded-xl p-2 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 transition-colors cursor-pointer file:cursor-pointer"
+                            />
                         </div>
 
                         <div className="col-span-2">
                             <label className="block text-sm font-medium text-gray-400 mb-2">Poster URL (Optional)</label>
-                            <input type="text" name="poster_path" className="form-input-dark" placeholder="https://example.com/poster.jpg" />
+                            <input
+                                type="text"
+                                name="poster_path"
+                                className="w-full bg-[#0a0a0a] border border-[#2D2D2D] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 placeholder:text-gray-700"
+                                placeholder="https://example.com/poster.jpg"
+                            />
                         </div>
 
                         <div className="col-span-2">
                             <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
-                            <textarea name="description" rows={3} className="form-input-dark" placeholder="Enter movie description..." />
+                            <textarea
+                                name="description"
+                                rows={3}
+                                className="w-full bg-[#0a0a0a] border border-[#2D2D2D] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 placeholder:text-gray-700 resize-none"
+                                placeholder="Enter movie description..."
+                            />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-800">
-                        <button type="button" onClick={onCancel} className="px-6 py-2.5 text-gray-400 hover:text-white font-medium">Cancel</button>
-                        <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-lg font-medium shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                            {loading ? 'Uploading...' : 'Save Movie'}
-                        </button>
+                    <div className="flex flex-col gap-4 mt-8 pt-4 border-t border-gray-800">
+                        {loading && (
+                            <div className="space-y-1.5 animate-in fade-in duration-300">
+                                <div className="flex justify-between text-xs font-medium text-blue-400">
+                                    <span>Uploading...</span>
+                                    <span>{uploadProgress}%</span>
+                                </div>
+                                <div className="w-full bg-[#0a0a0a] rounded-full h-2 border border-[#2D2D2D] overflow-hidden">
+                                    <div
+                                        className="bg-blue-600 h-full rounded-full transition-all duration-300 ease-out shadow-[0_0_10px_rgba(37,99,235,0.5)]"
+                                        style={{ width: `${uploadProgress}%` }}
+                                    />
+                                </div>
+                                <div className="flex justify-end text-[10px] text-gray-500 font-mono">
+                                    {formatFileSize(uploadSpeed)}/s
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex items-center justify-end gap-3">
+                            <button type="button" onClick={onCancel} disabled={loading} className="px-6 py-2.5 text-gray-400 hover:text-white font-medium transition-colors disabled:opacity-50">Cancel</button>
+                            <button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-8 py-2.5 rounded-xl font-medium shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2">
+                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                                {loading ? 'Processing...' : 'Save Movie'}
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
-
-            <style jsx>{`
-        .form-input-dark {
-          @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500 transition-colors;
-        }
-      `}</style>
         </div>
     );
 }
