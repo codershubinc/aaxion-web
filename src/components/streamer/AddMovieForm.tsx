@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { authenticatedFetch, API_BASE, getToken } from '@/lib/api';
+import { API_BASE, getToken } from '@/lib/api';
 import { Upload, Loader2, Search } from 'lucide-react';
 import { uploadFile, getSystemRootPath } from '@/services';
 import { formatFileSize } from '@/utils/fileUtils';
